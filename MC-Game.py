@@ -13,6 +13,10 @@ pygame.init()
 LANE_WIDTH = 150
 NUM_LANES = 3
 
+# Constants for score
+Score_value = 0
+textX = 10
+textY = 10
 # Constants for car dimensions and speed
 CAR_WIDTH = 160
 CAR_HEIGHT = 100
@@ -26,15 +30,24 @@ SCREEN_HEIGHT = 1080
 lane_positions = [(SCREEN_HEIGHT - NUM_LANES * LANE_WIDTH) // 2 + x * LANE_WIDTH for x in range(NUM_LANES)]
 middle_line_positions = [lane + LANE_WIDTH // 2 for lane in lane_positions]
 
-player = pygame.Rect(600, (SCREEN_HEIGHT - CAR_HEIGHT) // 2, CAR_WIDTH // 2, CAR_HEIGHT // 2)
+player = pygame.Rect(600, (SCREEN_HEIGHT - CAR_HEIGHT) // 2, 35, 50)
+
+
 wall = pygame.Rect(-100, 0, 100, SCREEN_HEIGHT)
 cars = []
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+font = pygame.font.Font('freesansbold.ttf', 32)
+
 run = True
 
 clock = pygame.time.Clock()
+
+def show_score(textX, textY):
+    score_text = font.render("Score: " + str(Score_value), True, (255, 255, 255))
+    screen.blit(score_text, (textX, textY))
+
 
 def spawn_car():
     lane_index = random.randint(0, NUM_LANES - 1)
@@ -44,6 +57,7 @@ def spawn_car():
         if car.colliderect(new_car):
             return  # Don't spawn if there's a collision
     cars.append(new_car)
+    return
 
 while run:
     clock.tick(60)  # Limit the frame rate to 60 FPS
@@ -52,9 +66,12 @@ while run:
         if event.type == QUIT:
             run = False
 
-    screen.fill((0, 0, 0))
+    screen.fill((0,0,0))
+    show_score(textX, textY)
+    
 
-     # Draw the lanes
+
+    # Draw the lanes
     for lane_y, middle_line_y in zip(lane_positions, middle_line_positions):
         pygame.draw.line(screen, (255, 255, 255), (0, lane_y), (SCREEN_WIDTH, lane_y), 4)
 
@@ -62,7 +79,6 @@ while run:
     bottom_lane_y = lane_positions[NUM_LANES - 1]
     pygame.draw.line(screen, (255, 255, 255), (0, bottom_lane_y + LANE_WIDTH), (SCREEN_WIDTH, bottom_lane_y + LANE_WIDTH), 4)
 
-    pygame.draw.rect(screen, (0, 0, 255), wall)
     pygame.draw.rect(screen, (0, 255, 0), player)
 
     # Draw grass
@@ -88,10 +104,13 @@ while run:
 
     key = pygame.key.get_pressed()
     if key[K_UP]:
-        player.move_ip(0, -3)
+        player.move_ip(0, -5)
     elif key[K_DOWN]:
-        player.move_ip(0, 3)
+        player.move_ip(0, 5)
 
+    Score_value += 1
+    
+    show_score(textX, textY)
     pygame.display.update()
-
+print("You got the score of", Score_value)
 pygame.quit()
