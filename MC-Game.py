@@ -62,6 +62,8 @@ def spawn_car():
 while run:
     clock.tick(60)  # Limit the frame rate to 60 FPS
 
+    CAR_SPEED = CAR_SPEED * 1.001
+
     for event in pygame.event.get():
         if event.type == QUIT:
             run = False
