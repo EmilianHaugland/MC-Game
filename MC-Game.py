@@ -113,4 +113,6 @@ while run:
     show_score(textX, textY)
     pygame.display.update()
 print("You got the score of", Score_value)
+print("Can you do better?")
+#ape
 pygame.quit()
