@@ -11,7 +11,7 @@ pygame.init()
 
 # Constants for lanes
 LANE_WIDTH = 150
-NUM_LANES = 3
+NUM_LANES = 5
 
 # Constants for score
 Score_value = 0
@@ -23,8 +23,8 @@ CAR_HEIGHT = 100
 CAR_SPEED = 5
 
 # Constants for screen size
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
 
 # Calculate lane positions and middle line positions
 lane_positions = [(SCREEN_HEIGHT - NUM_LANES * LANE_WIDTH) // 2 + x * LANE_WIDTH for x in range(NUM_LANES)]
