@@ -14,7 +14,7 @@ LANE_WIDTH = 150
 NUM_LANES = 5
 
 # Constants for score
-Score_value = 0
+Score_value = 1
 textX = 30
 textY = 30
 # Constants for car dimensions and speed
@@ -46,7 +46,7 @@ run = True
 clock = pygame.time.Clock()
 
 def show_score(textX, textY):
-    score_text = font.render("Score: " + str(Score_value), True, (255, 255, 255))
+    score_text = font.render("Score: " + str(round(Score_value)), True, (255, 255, 255))
     screen.blit(score_text, (textX, textY))
 
 
@@ -63,9 +63,9 @@ def spawn_car():
 while run:
     clock.tick(60)  # Limit the frame rate to 60 FPS
 
-    CAR_SPEED = CAR_SPEED * 1.001
+    CAR_SPEED = CAR_SPEED * 1.0003
 
-    PLAYER_SPEED = PLAYER_SPEED * 1.0005
+    PLAYER_SPEED = PLAYER_SPEED * 1.0001
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -110,10 +110,11 @@ while run:
     elif key[K_DOWN]:
         player.move_ip(0, PLAYER_SPEED)
 
-    Score_value += 1
+    Score_value = Score_value * 1.0005 + 0.1
     
     show_score(textX, textY)
     pygame.display.update()
+
 print("You got the score of", Score_value)
 pygame.quit()
 
