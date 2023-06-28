@@ -3,11 +3,20 @@ import random
 from pygame.locals import (
     K_UP,
     K_DOWN,
+    K_w,
+    K_s,
     KEYDOWN,
     QUIT,
 )
 
 pygame.init()
+
+highscore = 0
+
+with open("data.txt", "r") as f:
+    highscore = f.read(99999)
+
+print(highscore)
 
 # Constants for lanes
 LANE_WIDTH = 150
@@ -105,16 +114,21 @@ while run:
         spawn_car()
 
     key = pygame.key.get_pressed()
-    if key[K_UP]:
+    if key[K_UP] or key[K_w]:
         player.move_ip(0, -PLAYER_SPEED)
-    elif key[K_DOWN]:
+    elif key[K_DOWN] or key[K_s]:
         player.move_ip(0, PLAYER_SPEED)
 
     Score_value = Score_value * 1.0005 + 0.1
     
     show_score(textX, textY)
+
     pygame.display.update()
 
 print("You got the score of", Score_value)
+if Score_value > float(highscore):
+    with open("data.txt", "w") as f:
+        f.write(str(round(Score_value)))
+
 pygame.quit()
 
