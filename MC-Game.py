@@ -21,6 +21,7 @@ textY = 30
 CAR_WIDTH = 160
 CAR_HEIGHT = 100
 CAR_SPEED = 5
+PLAYER_SPEED = 5
 
 # Constants for screen size
 SCREEN_WIDTH = 1920
@@ -64,6 +65,8 @@ while run:
 
     CAR_SPEED = CAR_SPEED * 1.001
 
+    PLAYER_SPEED = PLAYER_SPEED * 1.0005
+
     for event in pygame.event.get():
         if event.type == QUIT:
             run = False
@@ -103,9 +106,9 @@ while run:
 
     key = pygame.key.get_pressed()
     if key[K_UP]:
-        player.move_ip(0, -5)
+        player.move_ip(0, -PLAYER_SPEED)
     elif key[K_DOWN]:
-        player.move_ip(0, 5)
+        player.move_ip(0, PLAYER_SPEED)
 
     Score_value += 1
     
