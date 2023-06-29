@@ -1,0 +1,5 @@
+Time alive: 8.8 seconds!
+The car speed was: 5 WOW, that is difficult
+You passed: 2 cars!
+You crashed at: 240X 525Y
+The car you crashed with was at: 275X 470Y
