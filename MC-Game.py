@@ -55,6 +55,7 @@ carnumber = 0
 car1 = pygame.image.load("car.png")
 #car2 = pygame.image.load("car2.png")
 car3 = pygame.image.load("car3.png")
+motorcycle = pygame.image.load("motorcycle.png")
 
 car_list = [car1, car3]
 
@@ -102,7 +103,7 @@ def spawn_car():
     car_width = CAR_WIDTH
     car_height = CAR_HEIGHT
     y = lane_y + (LANE_WIDTH - car_height) // 2 + LANE_WIDTH // 2
-    new_car = Car(image, SCREEN_WIDTH, y, car_width, car_height)
+    new_car = Car(image, SCREEN_WIDTH + 200, y, car_width, car_height)
     for car in cars:
         if car.rect.colliderect(new_car.rect):
             return  # Don't spawn if there's a collision
@@ -110,7 +111,7 @@ def spawn_car():
     return
 
 while run:
-    clock.tick(60)  # Limit the frame rate to 60 FPS
+    clock.tick(90)  # Limit the frame rate to 60 FPS
 
     if Score_value > 1000 and Score_value < 3000 and CAR_SPEED < 10:
          Score_num = 1.5
@@ -132,7 +133,7 @@ while run:
         if event.type == QUIT:
             run = False
 
-    screen.fill((0,0,0))
+    screen.fill((50,50,50))
 
     # Draw the lanes
     for lane_y, middle_line_y in zip(lane_positions, middle_line_positions):
@@ -146,7 +147,7 @@ while run:
     pygame.draw.rect(screen, (0, 128, 0), pygame.Rect(0, 0, SCREEN_WIDTH, lane_positions[0]))
     pygame.draw.rect(screen, (0, 128, 0), pygame.Rect(0, lane_positions[NUM_LANES - 1] + LANE_WIDTH, SCREEN_WIDTH, SCREEN_HEIGHT))
 
-    pygame.draw.rect(screen, (0, 255, 0), player)
+    screen.blit(motorcycle, player)
 
     # Move and draw each car
     for car in cars:
