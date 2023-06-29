@@ -22,8 +22,13 @@ print(highscore)
 LANE_WIDTH = 150
 NUM_LANES = 5
 
+# player position
+postextX = 30
+postextY = 1000
+
 # Constants for score
 Score_value = 1
+Score_num = 1
 textX = 30
 textY = 30
 # Constants for car dimensions and speed
@@ -45,6 +50,7 @@ player = pygame.Rect(200, (SCREEN_HEIGHT - CAR_HEIGHT) // 2, 35, 50)
 
 wall = pygame.Rect(-500, 0, 100, SCREEN_HEIGHT)
 cars = []
+carnumber = 0
 
 car1 = pygame.image.load("car.png")
 
@@ -57,9 +63,20 @@ run = True
 
 clock = pygame.time.Clock()
 
-def show_score(textX, textY):
+def timer(posx, posy):
+    Time = pygame.time.get_ticks() / 1000
+    time_text = font.render("Time: " + str("{0:.1f}".format(Time)), True, (255, 255, 255))
+    screen.blit(time_text, (posx, posy + 50))
+
+def position(posx, posy):
+    position_textY = font.render("PlayerY : " + str(player.y), True, (255, 255, 255))
+    diff = font.render("Car speed: " + str(round(CAR_SPEED)), True, (255, 255, 255))
+    screen.blit(position_textY, (posx, posy - 50))
+    screen.blit(diff, (posx, posy))
+
+def show_score(posx, posy):
     score_text = font.render("Score: " + str(round(Score_value)), True, (255, 255, 255))
-    screen.blit(score_text, (textX, textY))
+    screen.blit(score_text, (posx, posy))
 
 
 def spawn_car():
@@ -75,8 +92,20 @@ def spawn_car():
 while run:
     clock.tick(60)  # Limit the frame rate to 60 FPS
 
-    CAR_SPEED = CAR_SPEED * 1.0003
-
+    if Score_value > 1000 and Score_value < 3000 and CAR_SPEED < 10:
+         Score_num = 1.5
+         CAR_SPEED = CAR_SPEED * 1.01
+    elif Score_value > 3000 and Score_value < 6000 and CAR_SPEED < 15:
+        Score_num = 2
+        CAR_SPEED = CAR_SPEED * 1.01
+    elif Score_value > 6000 and Score_value < 10000 and CAR_SPEED < 20:
+        Score_num = 2.5
+        PLAYER_SPEED = 7
+        CAR_SPEED = CAR_SPEED * 1.01
+    elif Score_value > 10000 and Score_value < 15000 and CAR_SPEED < 30:
+        Score_num = 3
+        PLAYER_SPEED = 10 
+        CAR_SPEED = CAR_SPEED * 1.01
     PLAYER_SPEED = PLAYER_SPEED * 1.0001
 
     for event in pygame.event.get():
@@ -110,6 +139,7 @@ while run:
         # Check if the car collides with the wall
         if car.colliderect(wall):
             cars.remove(car)
+            carnumber += 1
 
     # Spawn a new car randomly
     if random.random() < 0.02:  # Adjust the probability to your liking
@@ -121,9 +151,13 @@ while run:
     elif key[K_DOWN] or key[K_s]:
         player.move_ip(0, PLAYER_SPEED)
 
-    Score_value = Score_value * 1.0005 + 0.1
-    
+    position(postextX, postextY)
+
+    timer(textX, textY)
+
     show_score(textX, textY)
+
+    Score_value += Score_num
 
     pygame.display.update()
 
