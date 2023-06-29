@@ -32,8 +32,8 @@ Score_num = 1
 textX = 30
 textY = 30
 # Constants for car dimensions and speed
-CAR_WIDTH = 160
-CAR_HEIGHT = 100
+CAR_WIDTH = 250
+CAR_HEIGHT = 140
 CAR_SPEED = 5
 PLAYER_SPEED = 5
 
@@ -53,11 +53,17 @@ cars = []
 carnumber = 0
 
 car1 = pygame.image.load("car.png")
+#car2 = pygame.image.load("car2.png")
+car3 = pygame.image.load("car3.png")
+
+car_list = [car1, car3]
 
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 font = pygame.font.Font('freesansbold.ttf', 32)
+
+ape = random.randint(0,1)
 
 run = True
 
@@ -78,15 +84,29 @@ def show_score(posx, posy):
     score_text = font.render("Score: " + str(round(Score_value)), True, (255, 255, 255))
     screen.blit(score_text, (posx, posy))
 
+class Car(pygame.sprite.Sprite):
+    def __init__(self, image, x, y, width, height):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale(image, (width, height))
+        self.rect = self.image.get_rect(center=(x, y))
+
+
+cars = pygame.sprite.Group()
+
+# ...
 
 def spawn_car():
     lane_index = random.randint(0, NUM_LANES - 1)
     lane_y = lane_positions[lane_index]
-    new_car = pygame.Rect(SCREEN_WIDTH, lane_y + (LANE_WIDTH - CAR_HEIGHT) // 2, CAR_WIDTH, CAR_HEIGHT)
+    image = random.choice(car_list)
+    car_width = CAR_WIDTH
+    car_height = CAR_HEIGHT
+    y = lane_y + (LANE_WIDTH - car_height) // 2 + LANE_WIDTH // 2
+    new_car = Car(image, SCREEN_WIDTH, y, car_width, car_height)
     for car in cars:
-        if car.colliderect(new_car):
+        if car.rect.colliderect(new_car.rect):
             return  # Don't spawn if there's a collision
-    cars.append(new_car)
+    cars.add(new_car)
     return
 
 while run:
@@ -130,14 +150,15 @@ while run:
 
     # Move and draw each car
     for car in cars:
-        car.move_ip(-CAR_SPEED, 0)  # Increase the movement amount to make cars go faster
-        screen.blit(car1, car)
+        car.rect.move_ip(-CAR_SPEED, 0)  # Increase the movement amount to make cars go faster
+        screen.blit(car.image, car.rect)
+
         # Check if the car collides with the player
-        if car.colliderect(player):
+        if car.rect.colliderect(player):
             run = False
 
         # Check if the car collides with the wall
-        if car.colliderect(wall):
+        if car.rect.colliderect(wall):
             cars.remove(car)
             carnumber += 1
 
