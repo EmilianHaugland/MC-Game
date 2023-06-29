@@ -36,7 +36,7 @@ PLAYER_SPEED = 5
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 
-# Calculate lane positions and middle line positions
+# Calculate lane positions
 lane_positions = [(SCREEN_HEIGHT - NUM_LANES * LANE_WIDTH) // 2 + x * LANE_WIDTH for x in range(NUM_LANES)]
 middle_line_positions = [lane + LANE_WIDTH // 2 for lane in lane_positions]
 
@@ -45,6 +45,9 @@ player = pygame.Rect(200, (SCREEN_HEIGHT - CAR_HEIGHT) // 2, 35, 50)
 
 wall = pygame.Rect(-500, 0, 100, SCREEN_HEIGHT)
 cars = []
+
+car1 = pygame.image.load("car.png")
+
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
@@ -99,8 +102,7 @@ while run:
     # Move and draw each car
     for car in cars:
         car.move_ip(-CAR_SPEED, 0)  # Increase the movement amount to make cars go faster
-        pygame.draw.rect(screen, (255, 0, 0), car)
-
+        screen.blit(car1, car)
         # Check if the car collides with the player
         if car.colliderect(player):
             run = False
@@ -125,10 +127,9 @@ while run:
 
     pygame.display.update()
 
-print("You got the score of", Score_value)
+
 if Score_value > float(highscore):
     with open("data.txt", "w") as f:
         f.write(str(round(Score_value)))
 
 pygame.quit()
-
