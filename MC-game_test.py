@@ -81,11 +81,8 @@ game_state = "start"
 
 clock = pygame.time.Clock()
 
-def timer(posx, posy):
-    Time2 = pygame.time.get_ticks() / 1000
-    time_text = font.render("Time: " + str("{0:.1f}".format(Time2)), True, (255, 255, 255))
-    global Time
-    Time = Time2
+def timer(posx, posy, current_time):
+    time_text = font.render("Time: " + str("{0:.1f}".format(current_time)), True, (255, 255, 255))
     screen.blit(time_text, (posx, posy + 50))
 
 def position(posx, posy):
@@ -153,10 +150,12 @@ while run:
             if game_state == "start":
                 if event.key == pygame.K_SPACE:
                     game_state = "running"
+                    Time = 0  # Reset the time when the game starts
             elif game_state == "game_over":
                 if event.key == pygame.K_r:
                     # Restart the game
                     game_state = "running"
+                    Time = 0  # Reset the time when the game restarts
                     cars.empty()
                     player.y = (SCREEN_HEIGHT - CAR_HEIGHT) // 2
                     Score_value = 1
@@ -177,6 +176,8 @@ while run:
         screen.blit(your_highscore, (SCREEN_WIDTH // 2 - your_highscore.get_width() // 2, SCREEN_HEIGHT // 2 -50))
         screen.blit(start_text, (SCREEN_WIDTH // 2 - start_text.get_width() // 2, SCREEN_HEIGHT // 2))
     elif game_state == "running":
+        if Time == 0:
+            Time = pygame.time.get_ticks() / 1000
         # Draw the lanes
         for lane_y, middle_line_y in zip(lane_positions, middle_line_positions):
             pygame.draw.line(screen, (255, 255, 255), (0, lane_y), (SCREEN_WIDTH, lane_y), 4)
@@ -209,6 +210,9 @@ while run:
         if random.random() < 0.02:  # Adjust the probability to your liking
             spawn_car()
 
+        current_time = pygame.time.get_ticks() / 1000 - Time  # Calculate the elapsed time
+        timer(textX, textY, current_time)
+
         key = pygame.key.get_pressed()
         if key[K_UP] or key[K_w]:
             if player.y > 160:
@@ -232,8 +236,6 @@ while run:
         screen.blit(motorcycle1, (player.x - int(motorcycle1.get_width() / 2 - 20), player.y - int(motorcycle1.get_height() / 2 - 10)))
 
         position(postextX, postextY)
-
-        timer(textX, textY)
 
         show_score(textX, textY)
 
