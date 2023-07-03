@@ -1,1 +1,1 @@
-Time alive: 43.1    Number of cars: 119
+Time alive: 37.3    Number of cars: 52

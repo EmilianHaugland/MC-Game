@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -19,6 +20,7 @@ with open("data.txt", "r") as f:
 Time = 0
 
 # Constants for lanes
+LINE_X = 1
 LANE_WIDTH = 150
 NUM_LANES = 5
 
@@ -34,8 +36,8 @@ textY = 30
 # Constants for car dimensions and speed
 CAR_WIDTH = 250
 CAR_HEIGHT = 140
-CAR_SPEED = 5
-PLAYER_SPEED = 5
+CAR_SPEED = 10
+PLAYER_SPEED = 4
 
 # Constants for screen size
 SCREEN_WIDTH = 1920
@@ -48,9 +50,6 @@ middle_line_positions = [lane + LANE_WIDTH // 2 for lane in lane_positions]
 player = pygame.Rect(180, (SCREEN_HEIGHT - CAR_HEIGHT) // 2, 60, 20)
 
 wall = pygame.Rect(-800, 0, 100, SCREEN_HEIGHT)
-cars = []
-carnumber = 0
-
 car1 = pygame.image.load("car.png")
 car2 = pygame.image.load("car2.png")
 car3 = pygame.image.load("car3.png")
@@ -60,6 +59,9 @@ motorcycle = pygame.image.load("motorcycle.png")
 trailer = pygame.image.load("Trailer.png")
 motorcycle = pygame.image.load("motorcycle.png")
 motorcycle1 = motorcycle
+cars = []
+carnumber = 0
+
 
 
 carcrashX = None
@@ -127,9 +129,28 @@ def spawn_car():
     cars.add(new_car)
     return
 
+linegroup = []
+
+evnt, t, trail = pygame.USEREVENT+1, round(150 - (CAR_SPEED * 6)), []
+pygame.time.set_timer(evnt, t)
+
+def liness():
+    y = 315
+    lines = pygame.Rect(2100, y, 100, 3)
+    linegroup.append(lines)
+    y = 465
+    lines = pygame.Rect(2100, y, 100, 3)
+    linegroup.append(lines)
+    y = 615
+    lines = pygame.Rect(2100, y, 100, 3)
+    linegroup.append(lines)
+    y = 765
+    lines = pygame.Rect(2100, y, 100, 3)
+    linegroup.append(lines)
+
 while run:
 
-    clock.tick(90)  # Limit the frame rate to 60 FPS
+    clock.tick(90)  # Limit the frame rate to 90 FPS
 
     if Score_value > 1000 and Score_value < 3000 and CAR_SPEED < 10:
          Score_num = 1.5
@@ -145,6 +166,10 @@ while run:
         Score_num = 3
         PLAYER_SPEED = 10 
         CAR_SPEED = CAR_SPEED * 1.005
+    elif Score_value > 15000 and CAR_SPEED < 45:
+        Score_num = 3.5
+        PLAYER_SPEED = 15 
+        CAR_SPEED = CAR_SPEED * 1.005
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -153,10 +178,12 @@ while run:
             if game_state == "start":
                 if event.key == pygame.K_SPACE:
                     game_state = "running"
+                    Time = 0  # Reset the time when the game starts
             elif game_state == "game_over":
                 if event.key == pygame.K_r:
                     # Restart the game
                     game_state = "running"
+                    Time = 0  # Reset the time when the game restarts
                     cars.empty()
                     player.y = (SCREEN_HEIGHT - CAR_HEIGHT) // 2
                     Score_value = 1
@@ -167,6 +194,8 @@ while run:
                 elif event.key == pygame.K_q:
                     # Quit the game
                     run = False
+        if event.type == evnt:
+            liness()
 
     screen.fill((50,50,50))
 
@@ -177,19 +206,32 @@ while run:
         screen.blit(your_highscore, (SCREEN_WIDTH // 2 - your_highscore.get_width() // 2, SCREEN_HEIGHT // 2 -50))
         screen.blit(start_text, (SCREEN_WIDTH // 2 - start_text.get_width() // 2, SCREEN_HEIGHT // 2))
     elif game_state == "running":
-        # Draw the lanes
-        for lane_y, middle_line_y in zip(lane_positions, middle_line_positions):
-            pygame.draw.line(screen, (255, 255, 255), (0, lane_y), (SCREEN_WIDTH, lane_y), 4)
-
-        # Draw white line for the bottom lane
-        bottom_lane_y = lane_positions[NUM_LANES - 1]
-        pygame.draw.line(screen, (255, 255, 255), (0, bottom_lane_y + LANE_WIDTH), (SCREEN_WIDTH, bottom_lane_y + LANE_WIDTH), 4)
-
+        if Time == 0:
+            Time = pygame.time.get_ticks() / 1000
+       
         # Draw grass
         pygame.draw.rect(screen, (0, 128, 0), pygame.Rect(0, 0, SCREEN_WIDTH, lane_positions[0]))
         pygame.draw.rect(screen, (0, 128, 0), pygame.Rect(0, lane_positions[NUM_LANES - 1] + LANE_WIDTH, SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        # Move and draw each car
+        screen.fill((50,50,50))
+
+        # Draw grass
+        pygame.draw.rect(screen, (0, 128, 0), pygame.Rect(0, 0, SCREEN_WIDTH, lane_positions[0]))
+        pygame.draw.rect(screen, (0, 128, 0), pygame.Rect(0, lane_positions[NUM_LANES - 1] + LANE_WIDTH, SCREEN_WIDTH, SCREEN_HEIGHT))
+    
+        # Draw white line for the bottom and top lane
+        tb_lane_y = lane_positions[NUM_LANES - 1]
+        pygame.draw.line(screen, (255, 255, 255), (0, tb_lane_y + LANE_WIDTH), (SCREEN_WIDTH, tb_lane_y + LANE_WIDTH), 4)
+        tb_lane_y = lane_positions[NUM_LANES - 5]
+        pygame.draw.line(screen, (255, 255, 255), (0, tb_lane_y + LANE_WIDTH - 150), (SCREEN_WIDTH, tb_lane_y + LANE_WIDTH - 150), 4)
+
+        for line in linegroup:
+         pygame.draw.rect(screen, (255, 255, 255), line)
+         line.move_ip(-CAR_SPEED - 15, 0)
+         if line.colliderect(wall):
+            linegroup.remove(line)
+
+            # Move and draw each car
         for car in cars:
             car.rect.move_ip(-CAR_SPEED, 0)  # Increase the movement amount to make cars go faster
             screen.blit(car.image, car.rect)
@@ -208,6 +250,8 @@ while run:
         # Spawn a new car randomly
         if random.random() < 0.02:  # Adjust the probability to your liking
             spawn_car()
+
+        current_time = pygame.time.get_ticks() / 1000 - Time  # Calculate the elapsed time
 
         key = pygame.key.get_pressed()
         if key[K_UP] or key[K_w]:
