@@ -37,7 +37,7 @@ textY = 30
 CAR_WIDTH = 250
 CAR_HEIGHT = 140
 CAR_SPEED = 10
-PLAYER_SPEED = 4
+PLAYER_SPEED = 5
 
 # Constants for screen size
 SCREEN_WIDTH = 1920
@@ -83,11 +83,8 @@ game_state = "start"
 
 clock = pygame.time.Clock()
 
-def timer(posx, posy):
-    Time2 = pygame.time.get_ticks() / 1000
-    time_text = font.render("Time: " + str("{0:.1f}".format(Time2)), True, (255, 255, 255))
-    global Time
-    Time = Time2
+def timer(posx, posy, current_time):
+    time_text = font.render("Time: " + str("{0:.1f}".format(current_time)), True, (255, 255, 255))
     screen.blit(time_text, (posx, posy + 50))
 
 def position(posx, posy):
@@ -251,7 +248,8 @@ while run:
         if random.random() < 0.02:  # Adjust the probability to your liking
             spawn_car()
 
-        current_time = pygame.time.get_ticks() / 1000 - Time  # Calculate the elapsed time
+        current_time = pygame.time.get_ticks() / 1000 - Time
+        timer(textX, textY, current_time)
 
         key = pygame.key.get_pressed()
         if key[K_UP] or key[K_w]:
@@ -276,8 +274,6 @@ while run:
         screen.blit(motorcycle1, (player.x - int(motorcycle1.get_width() / 2 - 20), player.y - int(motorcycle1.get_height() / 2 - 10)))
 
         position(postextX, postextY)
-
-        timer(textX, textY)
 
         show_score(textX, textY)
 
