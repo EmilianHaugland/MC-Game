@@ -130,7 +130,7 @@ def spawn_car():
 
 linegroup = []
 
-evnt, t, trail = pygame.USEREVENT+1, round(150 - (CAR_SPEED * 6)), []
+evnt, t, trail = pygame.USEREVENT+1, round(300 - (CAR_SPEED * 6)), []
 pygame.time.set_timer(evnt, t)
 
 def liness():
@@ -192,6 +192,7 @@ while run:
                     carnumber = 0
                     carcrashX = None
                     carcrashY = None
+                    PLAYER_SPEED = 5
                 elif event.key == pygame.K_q:
                     # Quit the game
                     run = False
@@ -205,7 +206,7 @@ while run:
         for line in linegroup:
             color = (50, 50, 50)
             pygame.draw.rect(screen, (color), line)
-            line.move_ip(-CAR_SPEED - 15, 0)
+            line.move_ip(-CAR_SPEED - 7, 0)
             if line.colliderect(wall):
                 linegroup.remove(line)
         start_text = font.render("Press SPACE to Start", True, (255, 255, 255))
@@ -234,7 +235,7 @@ while run:
 
         for line in linegroup:
          pygame.draw.rect(screen, (255, 255, 255), line)
-         line.move_ip(-CAR_SPEED - 15, 0)
+         line.move_ip(-CAR_SPEED - 7, 0)
          if line.colliderect(wall):
             linegroup.remove(line)
 
@@ -297,7 +298,7 @@ while run:
         for line in linegroup:
             color = (50, 50, 50)
             pygame.draw.rect(screen, (color), line)
-            line.move_ip(-CAR_SPEED - 15, 0)
+            line.move_ip(-CAR_SPEED - 7, 0)
             if line.colliderect(wall):
                 linegroup.remove(line)
         game_over_text = font.render("Game Over", True, (255, 255, 255))
