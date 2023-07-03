@@ -81,6 +81,8 @@ ape = random.randint(0,1)
 run = True
 game_state = "start"
 
+color = (255, 255, 255)
+
 clock = pygame.time.Clock()
 
 def timer(posx, posy, current_time):
@@ -174,10 +176,12 @@ while run:
         elif event.type == KEYDOWN:
             if game_state == "start":
                 if event.key == pygame.K_SPACE:
+                    color = (255, 255, 255)
                     game_state = "running"
                     Time = 0  # Reset the time when the game starts
             elif game_state == "game_over":
                 if event.key == pygame.K_r:
+                    color = (255, 255, 255)
                     # Restart the game
                     game_state = "running"
                     Time = 0  # Reset the time when the game restarts
@@ -198,6 +202,12 @@ while run:
 
     if game_state == "start":
         # Show start menu
+        for line in linegroup:
+            color = (50, 50, 50)
+            pygame.draw.rect(screen, (color), line)
+            line.move_ip(-CAR_SPEED - 15, 0)
+            if line.colliderect(wall):
+                linegroup.remove(line)
         start_text = font.render("Press SPACE to Start", True, (255, 255, 255))
         your_highscore = font.render("Your highscore is " + str(highscore), True, (255, 255, 255))
         screen.blit(your_highscore, (SCREEN_WIDTH // 2 - your_highscore.get_width() // 2, SCREEN_HEIGHT // 2 -50))
@@ -228,7 +238,7 @@ while run:
          if line.colliderect(wall):
             linegroup.remove(line)
 
-            # Move and draw each car
+        # Move and draw each car
         for car in cars:
             car.rect.move_ip(-CAR_SPEED, 0)  # Increase the movement amount to make cars go faster
             screen.blit(car.image, car.rect)
@@ -284,6 +294,12 @@ while run:
 
     elif game_state == "game_over":
         # Show game over menu
+        for line in linegroup:
+            color = (50, 50, 50)
+            pygame.draw.rect(screen, (color), line)
+            line.move_ip(-CAR_SPEED - 15, 0)
+            if line.colliderect(wall):
+                linegroup.remove(line)
         game_over_text = font.render("Game Over", True, (255, 255, 255))
         restart_text = font.render("Press R to Restart", True, (255, 255, 255))
         quit_text = font.render("Press Q to Quit", True, (255, 255, 255))
