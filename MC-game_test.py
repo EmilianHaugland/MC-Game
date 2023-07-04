@@ -119,7 +119,11 @@ def spawn_car():
     if image == trailer:
         car_width = 675
     if image == tank:
-        car_width = 350
+        if Score_value > 5000:
+
+            car_width = 350
+        else: 
+            image = random.choice(car_list)
     car_height = CAR_HEIGHT
     y = lane_y + (LANE_WIDTH - car_height) // 2 + LANE_WIDTH // 2
 
