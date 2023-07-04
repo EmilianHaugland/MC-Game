@@ -1,8 +1,5 @@
 import pygame
 import random
-import time
-import cv2
-import numpy as np
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -61,6 +58,7 @@ car6 = pygame.image.load("car6h.png")
 
 motorcycle = pygame.image.load("motorcycle.png")
 
+tank = pygame.image.load("tankh.png")
 trailer = pygame.image.load("Trailerh.png")
 motorcycle = pygame.image.load("motorcycle.png")
 motorcycle1 = motorcycle
@@ -74,7 +72,7 @@ carcrashY = None
 
 angle = 0
 
-car_list = [car1, car2, car3, car4, car5, car6, trailer]
+car_list = [car1, car2, car3, car4, car5, car6, trailer, tank]
 
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -120,6 +118,8 @@ def spawn_car():
     car_width = CAR_WIDTH
     if image == trailer:
         car_width = 675
+    if image == tank:
+        car_width = 350
     car_height = CAR_HEIGHT
     y = lane_y + (LANE_WIDTH - car_height) // 2 + LANE_WIDTH // 2
 
@@ -135,8 +135,10 @@ def spawn_car():
 
 linegroup = []
 
+switch = False
+
 evnt = pygame.USEREVENT+1
-pygame.time.set_timer(evnt, 300)
+pygame.time.set_timer(evnt, 250)
 
 def liness():
     y = 315
@@ -154,37 +156,46 @@ def liness():
 
 while run:
 
-    clock.tick(90)  # Limit the frame rate to 90 FPS
+    clock.tick(60)  # Limit the frame rate to 60 FPS
 
-    if Score_value > 1000 and Score_value < 3000 and CAR_SPEED < 10:
+    if Score_value > 1000 and Score_value < 3000 and CAR_SPEED < 15:
         Score_num = 1.5
         CAR_SPEED = CAR_SPEED * 1.005
-    elif Score_value > 3000 and Score_value < 6000 and CAR_SPEED < 15:
+        if switch == False:
+            liness()
+            pygame.time.set_timer(evnt, 250)
+            switch = True
+    elif Score_value > 3000 and Score_value < 6000 and CAR_SPEED < 20:
         Score_num = 2
         CAR_SPEED = CAR_SPEED * 1.005
-    elif Score_value > 6000 and Score_value < 10000 and CAR_SPEED < 20:
+        if switch == True:
+            liness()
+            pygame.time.set_timer(evnt, 200)
+            switch = False
+    elif Score_value > 6000 and Score_value < 10000 and CAR_SPEED < 25:
         Score_num = 2.5
         PLAYER_SPEED = 7
         CAR_SPEED = CAR_SPEED * 1.005
+        if switch == False:
+            liness()
+            pygame.time.set_timer(evnt, 200)
+            switch = True
     elif Score_value > 10000 and Score_value < 15000 and CAR_SPEED < 30:
         Score_num = 3
         PLAYER_SPEED = 10 
         CAR_SPEED = CAR_SPEED * 1.005
+        if switch == True:
+            liness()
+            pygame.time.set_timer(evnt, 150)
+            switch = False
     elif Score_value > 15000 and CAR_SPEED < 45:
         Score_num = 3.5
         PLAYER_SPEED = 15 
         CAR_SPEED = CAR_SPEED * 1.005
-
-    if Score_value > 1000 and Score_value < 1010:
-        pygame.time.set_timer(evnt, 250)
-    elif Score_value > 3000 and Score_value < 3010:
-        pygame.time.set_timer(evnt, 200)
-    elif Score_value > 6000 and Score_value < 6010:
-        pygame.time.set_timer(evnt, 100)
-    elif Score_value > 10000 and Score_value < 10010:
-        pygame.time.set_timer(evnt, 20)
-    elif Score_value > 15000 and Score_value < 15010:
-        pygame.time.set_timer(evnt, 5)
+        if switch == False:
+            liness()
+            pygame.time.set_timer(evnt, 100)
+            switch = True
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -196,6 +207,7 @@ while run:
                     game_state = "running"
                     Time = 0  # Reset the time when the game starts
             elif game_state == "game_over":
+                pygame.time.set_timer(evnt, 250)
                 if event.key == pygame.K_r:
                     # Restart the game
                     color = (255, 255, 255)
@@ -204,6 +216,7 @@ while run:
                     cars.empty()
                     player.y = (SCREEN_HEIGHT - CAR_HEIGHT) // 2
                     Score_value = 1
+                    Score_num = 1
                     CAR_SPEED = 10
                     carnumber = 0
                     carcrashX = None
@@ -217,6 +230,12 @@ while run:
 
     screen.fill((50,50,50))
 
+    for line in linegroup:
+        pygame.draw.rect(screen, (color), line)
+        line.move_ip(-CAR_SPEED - 7, 0)
+        if line.colliderect(wall):
+            linegroup.remove(line)
+
     if game_state == "start":
         # Show start menu
         start_text = font.render("Press SPACE to Start", True, (255, 255, 255))
@@ -226,8 +245,6 @@ while run:
     elif game_state == "running":
         if Time == 0:
             Time = pygame.time.get_ticks() / 1000
-
-        screen.fill((50,50,50))
 
         # Draw grass
         pygame.draw.rect(screen, (0, 128, 0), pygame.Rect(0, 0, SCREEN_WIDTH, lane_positions[0]))
@@ -265,7 +282,7 @@ while run:
 
         key = pygame.key.get_pressed()
         if key[K_UP] or key[K_w]:
-            if player.y > 160:
+            if player.y > 150:
                 if angle < 20:
                     angle = angle + 1 * 2.5
                     motorcycle1 = pygame.transform.rotate(motorcycle, angle)
@@ -277,17 +294,11 @@ while run:
                     motorcycle1 = pygame.transform.rotate(motorcycle, angle)
                 player.move_ip(0, PLAYER_SPEED)
         elif angle > 0:
-            angle = angle - 1 * 2.5
+            angle = angle - 1 * 4
             motorcycle1 = pygame.transform.rotate(motorcycle, angle)
         elif angle < 0:
-            angle = angle + 1 * 2.5
+            angle = angle + 1 * 4
             motorcycle1 = pygame.transform.rotate(motorcycle, angle)
-        
-        for line in linegroup:
-            pygame.draw.rect(screen, (color), line)
-            line.move_ip(-CAR_SPEED - 7, 0)
-            if line.colliderect(wall):
-                linegroup.remove(line)
 
         screen.blit(motorcycle1, (player.x - int(motorcycle1.get_width() / 2 - 20), player.y - int(motorcycle1.get_height() / 2 - 10)))
 
@@ -295,7 +306,7 @@ while run:
 
         show_score(textX, textY)
 
-        Score_value += Score_num + 1
+        Score_value += Score_num
 
         with open("data.txt", "r") as f:
             highscore = f.read(99999)
@@ -326,5 +337,14 @@ while run:
             f.write(str(round(Score_value)))
 
 with open ("AdamsData.txt", "w") as f:
-    f.write("Time alive: " + str("{0:.1f}".format(Time)) + "    " + "Number of cars: " + str(carnumber))
+    f.write("Time alive: " + str("{0:.1f}".format(Time)) + " seconds!")
+    f.write("\n")
+    f.write("The car speed was: " + str(round(CAR_SPEED)) + ", WOW that is difficult")
+    f.write("\n")
+    f.write("You passed: " + str(carnumber) + " cars!")
+    f.write("\n")
+    f.write("You crashed at: " + str(player.x + 40) + "X " + str(player.y) + "Y")
+    f.write("\n")
+    f.write("The car you crashed with was at: " + str(carcrashX) + "X " + str(carcrashY) + "Y")
+
 pygame.quit()

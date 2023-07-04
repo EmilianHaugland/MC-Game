@@ -1,1 +1,5 @@
-Time alive: 1.6    Number of cars: 28
+Time alive: 1.6 seconds!
+The car speed was: 20, WOW that is difficult
+You passed: 39 cars!
+You crashed at: 220X 750Y
+The car you crashed with was at: -39X 620Y

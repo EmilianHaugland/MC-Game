@@ -2,7 +2,7 @@
 import cv2
 import numpy as np
 
-img = cv2.imread('car6.png')
+img = cv2.imread('line.png')
 
 # Specify the kernel size.
 # The greater the size, the more the motion.
@@ -26,8 +26,8 @@ kernel_h /= kernel_size
 vertical_mb = cv2.filter2D(img, -1, kernel_v)
 
 # Apply the horizontal kernel.
-horizonal_mb = cv2.filter2D(img, -1, kernel_h)
+horizonal_mb = cv2.filter2D(img, -5, kernel_h)
 
 # Save the outputs.
 cv2.imwrite('car_vertical.jpg', vertical_mb)
-cv2.imwrite('car6h.png', horizonal_mb)
+cv2.imwrite('lineh.png', horizonal_mb)
