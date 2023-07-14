@@ -1,5 +1,5 @@
-Time alive: 15.8 seconds!
-The car speed was: 15, WOW that is difficult
-You passed: 16 cars!
-You crashed at: 140X 150Y
-The car you crashed with was at: 151X 130Y
+Time alive: 10.5 seconds!
+The difficulty was: Easy, WOW that is difficult
+You passed: 3 cars!
+You crashed at: 140X 660Y
+The car you crashed with was at: 1831X 470Y
